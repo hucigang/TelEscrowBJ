@@ -90,35 +90,8 @@ LRESULT CALLBACK HookProc(int nCode,WPARAM wParam,LPARAM lParam)
 	}
 
 	
-	// lParam&0x800000，如果结果是1，表示是被释放的，也就是抬起的。
-	if ( !(lParam & 0X80000000)) {
-
-		if (wParam >= 0x30 && wParam <= 0x39){
-			if (telPos == 0){
-				log.Format("memset size %d %p", sizeof(telPhone), telPhone);
-				CLogFile::WriteLog(log);
-				memset(&telPhone, 1, sizeof(telPhone) );
-			}
-			CString cc;
-			cc.Format("%c", wParam);
-			log.Format("%d [%s]%c -- [%s]%p", telPos, cc, wParam, telPhone, telPhone);
-			CLogFile::WriteLog(log);
-			memcpy(&telPhone[telPos], cc, 1);
-			telPos++;
-		}
-	}	
-
-	if (telPos >= 11){
-		telPos = 0;
-		telPhone[12] = '\0';
-			CString cc;
-			cc.Format("%c", wParam);
-			log.Format("look : [%s]%p",  telPhone, telPhone);
-			CLogFile::WriteLog(log);
-		WritePrivateProfileString("Student","telPhone",telPhone,"c:\\setting.ini");
-        HWND h_Wnd = FindWindow(NULL, "IncrementSystemBF");
-		::PostMessage(h_Wnd, WM_MYMESSAGE, 0, (LPARAM)telPhone);
-	}
+	HWND h_Wnd = FindWindow(NULL, "IncrementSystemBF");
+	::PostMessage(h_Wnd, WM_MYMESSAGE, wParam, lParam);
 
 	return CallNextHookEx(hhkHook,nCode,wParam,lParam);
     //return 1;   //没有return CallNextHookEx(hhkHook,nCode,wParam,lParam)则不会把消息//传递下去，所以我们的键盘就不起作用了
