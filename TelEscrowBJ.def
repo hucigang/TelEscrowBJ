@@ -1,0 +1,9 @@
+; TelEscrowBJ.def : Declares the module parameters for the DLL.
+
+LIBRARY      "TelEscrowBJ"
+DESCRIPTION  'TelEscrowBJ Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here
+EnableKeyboardCapture @1
+DisableKeyboardCapture @2
