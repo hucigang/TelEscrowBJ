@@ -11,6 +11,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+
+
 #define WM_MYMESSAGE	(WM_USER+100)
 //
 //	Note!
@@ -53,10 +55,13 @@ END_MESSAGE_MAP()
 // CTelEscrowBJApp construction
 #pragma data_seg(".SHARDAT")
 static HHOOK hhkHook=NULL;                            //定义钩子句柄
-static HINSTANCE hInstance =NULL;                  //程序实例
+static HINSTANCE hInstance =NULL;                  //程序实例18601199172
 char telPhone[12] = {0};
 int telPos = 0;
 CString log = "";
+#define MAX_LENGTH 500
+#define CONFIG_PSTR _T("IncrementSystem.ini")
+static CString title;
 #pragma data_seg()
 
 extern "C"
@@ -89,15 +94,30 @@ LRESULT CALLBACK HookProc(int nCode,WPARAM wParam,LPARAM lParam)
 		return CallNextHookEx(hhkHook,nCode,wParam,lParam);
 	}
 
+	CString	sPath;
+	GetModuleFileName(hInstance,sPath.GetBufferSetLength(MAX_PATH+1),MAX_PATH);
+	sPath.ReleaseBuffer    ();   
+	int    nPos;   
+	nPos=sPath.ReverseFind('\\');   
+	sPath=sPath.Left(nPos); 
+
+	CString configFile;
+	configFile.Format("%s\\%s", sPath, CONFIG_PSTR);
+	GetPrivateProfileString("System","Title","", title.GetBuffer(MAX_LENGTH),MAX_LENGTH,configFile);
+	CString logStr;
+	logStr.Format("SSSS Sub DLL Ttile [%s] %s %s %s", title, sPath, configFile, logStr);
+	CLogFile::WriteLog(logStr); 
+
+
 	
-	HWND h_Wnd = FindWindow(NULL, "IncrementSystemBF");
+	HWND h_Wnd = FindWindow(NULL, title);
 	::PostMessage(h_Wnd, WM_MYMESSAGE, wParam, lParam);
 
 	return CallNextHookEx(hhkHook,nCode,wParam,lParam);
-    //return 1;   //没有return CallNextHookEx(hhkHook,nCode,wParam,lParam)则不会把消息//传递下去，所以我们的键盘就不起作用了
+    //return 1;   //没有return CallNextHookEx(hhkHook,nCode,wParam,lParam)则不会把消息//传递下去，所以我们的键盘就不起作用了15811043447
 }
 
-// This is an example of an exported variable 1860117917215811043447
+// This is an example of an exported variable 
 
 //导出函数：启动键盘锁定
 
@@ -114,6 +134,7 @@ BOOL DisableKeyboardCapture()
 {
 	return UnhookWindowsHookEx(hhkHook);
 }
+
 
 CTelEscrowBJApp::CTelEscrowBJApp()
 {
