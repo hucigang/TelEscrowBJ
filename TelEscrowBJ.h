@@ -21,7 +21,6 @@
 __declspec(dllexport) BOOL EnableKeyboardCapture();       //╪сть╧Ёвс
 __declspec(dllexport) BOOL DisableKeyboardCapture();       //п╤ть╧Ёвс
 
-
 class CTelEscrowBJApp : public CWinApp
 {
 public:

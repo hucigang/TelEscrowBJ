@@ -55,7 +55,7 @@ END_MESSAGE_MAP()
 // CTelEscrowBJApp construction
 #pragma data_seg(".SHARDAT")
 static HHOOK hhkHook=NULL;                            //定义钩子句柄
-static HINSTANCE hInstance =NULL;                  //程序实例18601199172
+static HINSTANCE hInstance =NULL;                  //程序实例
 char telPhone[12] = {0};
 int telPos = 0;
 CString log = "";
@@ -83,7 +83,7 @@ BOOL WINAPI DllMain( HANDLE hModule,
     return TRUE;
 }
 
-//这是处理键盘消息的主要函数，在其中进行禁止操作18601179172
+//这是处理键盘消息的主要函数，在其中进行禁止操作
 
 LRESULT CALLBACK HookProc(int nCode,WPARAM wParam,LPARAM lParam)
 {
@@ -94,6 +94,7 @@ LRESULT CALLBACK HookProc(int nCode,WPARAM wParam,LPARAM lParam)
 		return CallNextHookEx(hhkHook,nCode,wParam,lParam);
 	}
 
+	// 获取执行程序目录
 	CString	sPath;
 	GetModuleFileName(hInstance,sPath.GetBufferSetLength(MAX_PATH+1),MAX_PATH);
 	sPath.ReleaseBuffer    ();   
@@ -101,20 +102,16 @@ LRESULT CALLBACK HookProc(int nCode,WPARAM wParam,LPARAM lParam)
 	nPos=sPath.ReverseFind('\\');   
 	sPath=sPath.Left(nPos); 
 
+	// 获取配置文件中 执行文件的title
 	CString configFile;
 	configFile.Format("%s\\%s", sPath, CONFIG_PSTR);
 	GetPrivateProfileString("System","Title","", title.GetBuffer(MAX_LENGTH),MAX_LENGTH,configFile);
-	CString logStr;
-	logStr.Format("SSSS Sub DLL Ttile [%s] %s %s %s", title, sPath, configFile, logStr);
-	CLogFile::WriteLog(logStr); 
-
-
 	
 	HWND h_Wnd = FindWindow(NULL, title);
 	::PostMessage(h_Wnd, WM_MYMESSAGE, wParam, lParam);
 
 	return CallNextHookEx(hhkHook,nCode,wParam,lParam);
-    //return 1;   //没有return CallNextHookEx(hhkHook,nCode,wParam,lParam)则不会把消息//传递下去，所以我们的键盘就不起作用了15811043447
+    //return 1;   //没有return CallNextHookEx(hhkHook,nCode,wParam,lParam)则不会把消息//传递下去，所以我们的键盘就不起作用了
 }
 
 // This is an example of an exported variable 
